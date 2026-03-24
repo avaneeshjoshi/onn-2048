@@ -1,36 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-const GRID_SIZE = 4;
-
-function createGrid(): number[][] {
-  return Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(0));
-}
-
-function getEmptyCells(grid: number[][]): Array<[number, number]> {
-  const cells: Array<[number, number]> = [];
-  for (let r = 0; r < GRID_SIZE; r += 1) {
-    for (let c = 0; c < GRID_SIZE; c += 1) {
-      if (grid[r][c] === 0) cells.push([r, c]);
-    }
-  }
-  return cells;
-}
-
-function addRandomTile(grid: number[][]): number[][] {
-  const next = grid.map((row) => [...row]);
-  const empty = getEmptyCells(next);
-  if (!empty.length) return next;
-  const [r, c] = empty[Math.floor(Math.random() * empty.length)];
-  next[r][c] = Math.random() < 0.9 ? 2 : 4;
-  return next;
-}
-
-function initGrid(): number[][] {
-  return addRandomTile(addRandomTile(createGrid()));
-}
-
 function tileColor(value: number): string {
   if (value === 0) return "#cdc1b4";
   if (value <= 4) return "#eee4da";
@@ -41,17 +10,39 @@ function tileColor(value: number): string {
   return "#edc22e";
 }
 
-export default function Board() {
-  const [grid, setGrid] = useState<number[][]>(createGrid);
+type BoardProps = {
+  grid: number[][];
+  score: number;
+  isOver: boolean;
+  isLoading: boolean;
+  isAutoPlay: boolean;
+  lastDirection?: "up" | "down" | "left" | "right";
+  moveCounter: number;
+  onReset: () => void | Promise<void>;
+  onStep: () => void | Promise<void>;
+  onToggleAutoPlay: () => void;
+};
 
-  useEffect(() => {
-    setGrid(initGrid());
-  }, []);
-
-  const handleReset = () => setGrid(initGrid());
+export default function Board({
+  grid,
+  score,
+  isOver,
+  isLoading,
+  isAutoPlay,
+  lastDirection,
+  moveCounter,
+  onReset,
+  onStep,
+  onToggleAutoPlay,
+}: BoardProps) {
+  const safeGrid =
+    grid.length === 4 && grid.every((row) => row.length === 4)
+      ? grid
+      : Array.from({ length: 4 }, () => Array(4).fill(0));
 
   return (
     <section>
+      <p style={{ marginTop: 0, marginBottom: 12, fontWeight: 700 }}>Score: {score}</p>
       <div
         style={{
           display: "grid",
@@ -62,9 +53,10 @@ export default function Board() {
           borderRadius: 8,
         }}
       >
-        {grid.flat().map((value, idx) => (
+        {safeGrid.flat().map((value, idx) => (
           <div
-            key={idx}
+            key={`${idx}-${moveCounter}`}
+            className={value > 0 && lastDirection ? `tile-slide-${lastDirection}` : undefined}
             style={{
               width: 64,
               height: 64,
@@ -76,27 +68,65 @@ export default function Board() {
               justifyContent: "center",
               fontSize: 22,
               fontWeight: 700,
+              transition:
+                "background-color 240ms ease, color 240ms ease, transform 240ms ease",
             }}
           >
             {value || ""}
           </div>
         ))}
       </div>
-      <button
-        onClick={handleReset}
-        style={{
-          marginTop: 12,
-          border: "none",
-          borderRadius: 6,
-          padding: "8px 14px",
-          background: "var(--button-bg)",
-          color: "var(--button-fg)",
-          cursor: "pointer",
-          fontWeight: 600,
-        }}
-      >
-        Reset Board
-      </button>
+      <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+        <button
+          onClick={() => void onReset()}
+          disabled={isLoading}
+          style={{
+            border: "none",
+            borderRadius: 6,
+            padding: "8px 14px",
+            background: "var(--button-bg)",
+            color: "var(--button-fg)",
+            cursor: isLoading ? "not-allowed" : "pointer",
+            fontWeight: 600,
+            opacity: isLoading ? 0.7 : 1,
+          }}
+        >
+          New Game
+        </button>
+        <button
+          onClick={() => void onStep()}
+          disabled={isLoading || isOver}
+          style={{
+            border: "none",
+            borderRadius: 6,
+            padding: "8px 14px",
+            background: "var(--button-bg)",
+            color: "var(--button-fg)",
+            cursor: isLoading || isOver ? "not-allowed" : "pointer",
+            fontWeight: 600,
+            opacity: isLoading || isOver ? 0.7 : 1,
+          }}
+        >
+          Next AI Move
+        </button>
+        <button
+          onClick={onToggleAutoPlay}
+          disabled={isLoading || isOver}
+          style={{
+            border: "none",
+            borderRadius: 6,
+            padding: "8px 14px",
+            background: isAutoPlay ? "#2563eb" : "var(--button-bg)",
+            color: "var(--button-fg)",
+            cursor: isLoading || isOver ? "not-allowed" : "pointer",
+            fontWeight: 600,
+            opacity: isLoading || isOver ? 0.7 : 1,
+          }}
+        >
+          {isAutoPlay ? "Stop Auto Play" : "Start Auto Play"}
+        </button>
+      </div>
+      {isOver ? <p style={{ marginBottom: 0 }}>Game over.</p> : null}
     </section>
   );
 }

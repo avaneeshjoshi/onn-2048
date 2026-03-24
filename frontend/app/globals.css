@@ -58,6 +58,74 @@ a {
   text-decoration: none;
 }
 
+.tile-changed {
+  animation: tile-pop 240ms ease;
+}
+
+@keyframes tile-pop {
+  0% {
+    transform: scale(0.92);
+  }
+  55% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.tile-slide-left {
+  animation: tile-slide-left 220ms ease;
+}
+
+.tile-slide-right {
+  animation: tile-slide-right 220ms ease;
+}
+
+.tile-slide-up {
+  animation: tile-slide-up 220ms ease;
+}
+
+.tile-slide-down {
+  animation: tile-slide-down 220ms ease;
+}
+
+@keyframes tile-slide-left {
+  from {
+    transform: translateX(16px);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes tile-slide-right {
+  from {
+    transform: translateX(-16px);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes tile-slide-up {
+  from {
+    transform: translateY(16px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes tile-slide-down {
+  from {
+    transform: translateY(-16px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
