@@ -9,6 +9,8 @@
   --muted-foreground: #334155;
   --button-bg: #8f7a66;
   --button-fg: #ffffff;
+  --spring-ease: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --slide-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -58,16 +60,31 @@ a {
   text-decoration: none;
 }
 
+.tile-appear {
+  animation: tile-appear 200ms var(--spring-ease);
+}
+
+@keyframes tile-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .tile-changed {
-  animation: tile-pop 240ms ease;
+  animation: tile-pop 200ms ease-in-out;
 }
 
 @keyframes tile-pop {
   0% {
-    transform: scale(0.92);
+    transform: scale(1);
   }
-  55% {
-    transform: scale(1.06);
+  50% {
+    transform: scale(1.15);
   }
   100% {
     transform: scale(1);
@@ -75,24 +92,24 @@ a {
 }
 
 .tile-slide-left {
-  animation: tile-slide-left 220ms ease;
+  animation: tile-slide-left 200ms var(--slide-ease);
 }
 
 .tile-slide-right {
-  animation: tile-slide-right 220ms ease;
+  animation: tile-slide-right 200ms var(--slide-ease);
 }
 
 .tile-slide-up {
-  animation: tile-slide-up 220ms ease;
+  animation: tile-slide-up 200ms var(--slide-ease);
 }
 
 .tile-slide-down {
-  animation: tile-slide-down 220ms ease;
+  animation: tile-slide-down 200ms var(--slide-ease);
 }
 
 @keyframes tile-slide-left {
   from {
-    transform: translateX(16px);
+    transform: translateX(32px);
   }
   to {
     transform: translateX(0);
@@ -101,7 +118,7 @@ a {
 
 @keyframes tile-slide-right {
   from {
-    transform: translateX(-16px);
+    transform: translateX(-32px);
   }
   to {
     transform: translateX(0);
@@ -110,7 +127,7 @@ a {
 
 @keyframes tile-slide-up {
   from {
-    transform: translateY(16px);
+    transform: translateY(32px);
   }
   to {
     transform: translateY(0);
@@ -119,7 +136,7 @@ a {
 
 @keyframes tile-slide-down {
   from {
-    transform: translateY(-16px);
+    transform: translateY(-32px);
   }
   to {
     transform: translateY(0);
