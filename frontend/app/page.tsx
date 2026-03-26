@@ -148,7 +148,7 @@ export default function Home() {
           >
             <h3 style={{ marginTop: 0, marginBottom: 8, fontSize: 16 }}>ONN Move</h3>
             <p style={{ margin: 0, color: "var(--muted-foreground)", lineHeight: 1.4 }}>
-              {error ? `error: ${error}` : lastMove}
+              {error ? `error: ${error}` : isLoading ? "thinking..." : lastMove}
             </p>
           </aside>
         </div>
